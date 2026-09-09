@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-
+#define max(a, b) ((a) > (b) ? (a) : (b))
 
 typedef struct TreeNode {
     int max_in_subtree;
@@ -156,7 +156,7 @@ void get(Stack* stack, int i) {
     Tree* current_tree = stack->top->tree;
     TreeNode* current_node = current_tree->root;
     int height = current_tree->height;
-    for (int j = height-2; j >= 0; j--) {
+    for (int j = height-1; j >= 0; j--) {
         int bit = (i >> j) & 1;
         if (bit == 0 && current_node->has_left) {
             current_node = current_node->left;
@@ -167,16 +167,16 @@ void get(Stack* stack, int i) {
             return;
         }
     }
-    if (current_node->value == NULL) {
-        printf("0\n");
-    } else {
-        printf("%u\n", current_node->value);
-    }
+    printf("%u\n", current_node->value);
 }
 
 int main() {
-    // Your code here
     printf("Hello, World!\n");
-    navigate_tree(4, 5); // Example usage: height = 4, index = 5
+
+    Stack stack = new_array();
+
+    set(&stack, 2, 17);
+    get(&stack, 2);
+
     return 0;
 }
