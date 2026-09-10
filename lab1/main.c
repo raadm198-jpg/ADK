@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <stdint.h>
+#include <limits.h>
+#include <string.h>
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 typedef struct TreeNode {
@@ -36,8 +37,8 @@ void push(Stack* stack, Tree* tree) {
     stack->count++;
 }
 
-void pop(Stack* stack) {
-    if (stack->top != NULL) {
+void unset(Stack* stack) {
+    if (stack->count > 1) {
         StackNode* temp = stack->top;
         stack->top = stack->top->next;
         free(temp);
@@ -80,16 +81,20 @@ TreeNode* copy_node(TreeNode* current_node) {
 
 void update_max_in_subtree(TreeNode* updated_node) {
 
-    int left_max = 0;
-    int right_max = 0;
+    bool found_something = false;
+
+    int subtree_max = 0;
 
     if (updated_node->has_left) {
-        left_max = updated_node->left->max_in_subtree;
+        subtree_max = updated_node->left->max_in_subtree;
+        found_something = true;
     }
     if (updated_node->has_right) {
-        right_max = updated_node->right->max_in_subtree;
+        int value = updated_node->right->max_in_subtree;
+        if (!found_something || value > subtree_max) subtree_max = value;
+        found_something = true;
     }
-    updated_node->max_in_subtree = max(left_max, right_max);
+    if (found_something) updated_node->max_in_subtree = subtree_max;
 }
 
 TreeNode* extend_tree_height(TreeNode* root, int old_height, int new_height) {
@@ -152,9 +157,160 @@ void set(Stack* stack, int i, int value) {
     push(stack, updated_tree);
 }
 
+int max_in_interval(Stack* stack, int left, int right) {
+
+    bool same_path = true;
+    bool continue_left = true;
+    bool continue_right = true;
+    bool found_something = false;
+
+    int height = stack->top->tree->height;
+    int max_index = (1 << height) - 1;
+    if (left > max_index) return 0;
+    if (right > max_index) right = max_index;
+
+    int max_value = 0;
+    int leftmost = 0;
+    int rightmost = 0;
+
+    TreeNode* left_end = stack->top->tree->root;
+    TreeNode* right_end = stack->top->tree->root;
+
+    int left_path;
+    int right_path;
+    
+    for (int i = height - 1; i >= 0; i--) {
+        left_path = (left >> i) & 1;
+        right_path = (right >> i) & 1;
+        if (same_path) {
+            if (left_path == right_path) {
+                switch (left_path)
+                {
+                case 0:
+                    if (left_end->has_left) {
+                        left_end = left_end->left;
+                        right_end = right_end->left;
+                        continue;
+                    }
+                    else return 0;
+                    break;
+                
+                case 1:
+                    if (right_end->has_right) {
+                        left_end = left_end->right;
+                        right_end = right_end->right;
+                        continue;
+                    }
+                    else return 0;
+                    break;
+                }
+            }
+
+            else {
+                same_path = false;
+                if (!left_end->has_left) continue_left = false;
+                else left_end = left_end->left;
+                if (!right_end->has_right) continue_right = false;
+                else right_end = right_end->right;
+                if (!continue_left && !continue_right) return 0;
+                continue;
+            }
+        }
+
+        if (continue_left) {
+            switch (left_path)
+            {
+            case 0:
+                if (left_end->has_right) {
+                    int value = left_end->right->max_in_subtree;
+                    if (!found_something || value > max_value) {
+                        max_value = value;
+                        found_something = true;
+                    }
+                }
+                if (left_end->has_left) {
+                    left_end = left_end->left;
+                }
+                else continue_left = false;
+                break;
+            
+            case 1:
+                if (left_end->has_right) {
+                    left_end = left_end->right;
+                }
+                else continue_left = false;
+                break;
+            }
+        }
+        if (continue_right) {
+            switch (right_path)
+            {
+            case 0:
+                if (right_end->has_left) {
+                    right_end = right_end->left;
+                }
+                else continue_right = false;
+                break;
+            
+            case 1:
+                if (right_end->has_left) {
+                    int value = right_end->left->max_in_subtree;
+
+                    if (!found_something || value > max_value) {
+                        max_value = value;
+                        found_something = true;
+                    }
+                }
+
+                if (right_end->has_right) {
+                    right_end = right_end->right;
+                }
+                else {
+                    continue_right = false;
+                }
+                break;
+            }
+        }
+
+        if (!continue_left && !continue_right) {
+            return max_value;
+        }
+    }
+
+    if (continue_left) {
+        int value = left_end->value;
+
+        if (!found_something || value > max_value) {
+            max_value = value;
+            found_something = true;
+        }
+    }
+
+    if (continue_right) {
+        int value = right_end->value;
+
+        if (!found_something || value > max_value) {
+            max_value = value;
+            found_something = true;
+        }
+    }
+
+    if (!found_something)
+        return 0;
+
+    return max_value;
+}
+
 void get(Stack* stack, int i) {
     Tree* current_tree = stack->top->tree;
+
+    if (current_tree->root == NULL) {
+        printf("0\n");
+        return;
+    }
+
     TreeNode* current_node = current_tree->root;
+
     int height = current_tree->height;
     for (int j = height-1; j >= 0; j--) {
         int bit = (i >> j) & 1;
@@ -170,13 +326,49 @@ void get(Stack* stack, int i) {
     printf("%u\n", current_node->value);
 }
 
-int main() {
-    printf("Hello, World!\n");
+int main(void) {
 
-    Stack stack = new_array();
+    // initialize version stack
+    Stack array = new_array();
+    int index;
+    int value;
+    int left;
+    int right;
 
-    set(&stack, 2, 17);
-    get(&stack, 2);
+    char command[30];
+
+    while (scanf("%s", command) == 1) {
+
+        if (strcmp(command, "get") == 0) {
+
+
+            scanf("%d", &index);
+            if (index > 0) {
+                get(&array, index);
+            }
+
+        } else if (strcmp(command, "set") == 0) {
+
+            scanf("%d %d", &index, &value);
+            if (index > 0) {
+                set(&array, index, value);
+            }
+
+        } else if (strcmp(command, "unset") == 0) {
+
+            unset(&array);
+
+        } else if (strcmp(command, "maxininterval") == 0) {
+
+            scanf("%d %d", &left, &right);
+            if (left > 0) {
+                printf("%d \n", max_in_interval(&array, left, right));
+            }
+            // read left and right
+            // call maxininterval
+
+        }
+    }
 
     return 0;
 }
