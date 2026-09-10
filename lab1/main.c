@@ -159,6 +159,9 @@ void set(Stack* stack, int i, int value) {
 
 int max_in_interval(Stack* stack, int left, int right) {
 
+    Tree* tree = stack->top->tree;
+    if (tree->root == NULL) return 0;
+
     bool same_path = true;
     bool continue_left = true;
     bool continue_right = true;
@@ -323,7 +326,7 @@ void get(Stack* stack, int i) {
             return;
         }
     }
-    printf("%u\n", current_node->value);
+    printf("%d\n", current_node->value);
 }
 
 int main(void) {
@@ -343,14 +346,14 @@ int main(void) {
 
 
             scanf("%d", &index);
-            if (index > 0) {
+            if (index >= 0) {
                 get(&array, index);
             }
 
         } else if (strcmp(command, "set") == 0) {
 
             scanf("%d %d", &index, &value);
-            if (index > 0) {
+            if (index >= 0) {
                 set(&array, index, value);
             }
 
@@ -361,8 +364,11 @@ int main(void) {
         } else if (strcmp(command, "maxininterval") == 0) {
 
             scanf("%d %d", &left, &right);
-            if (left > 0) {
+            if (left >= 0 && right >= 0 && left <= right) {
                 printf("%d \n", max_in_interval(&array, left, right));
+            }
+            else {
+                printf("0\n");
             }
             // read left and right
             // call maxininterval
