@@ -244,57 +244,60 @@ void get(Stack* stack, int i) {
     printf("%d\n", current_node->value);
 }
 
-int main(void) {
+// int main(void) {
 
-    // initialize version stack
+//     // initialize version stack
+//     Stack array = new_array();
+//     int index;
+//     int value;
+//     int left;
+//     int right;
+
+//     char command[30];
+
+//     while (scanf("%s", command) == 1) {
+
+//         if (strcmp(command, "get") == 0) {
+
+
+//             scanf("%d", &index);
+//             if (index >= 0) {
+//                 get(&array, index);
+//             }
+
+//         } else if (strcmp(command, "set") == 0) {
+
+//             scanf("%d %d", &index, &value);
+//             if (index >= 0) {
+//                 set(&array, index, value);
+//             }
+
+//         } else if (strcmp(command, "unset") == 0) {
+
+//             unset(&array);
+
+//         } else if (strcmp(command, "maxininterval") == 0) {
+
+//             scanf("%d %d", &left, &right);
+//             if (left >= 0 && right >= 0 && left <= right) {
+//                 printf("%d \n", max_in_interval(&array, left, right));
+//             }
+//             else {
+//                 printf("0\n");
+//             }
+//             // read left and right
+//             // call maxininterval
+
+//         }
+//     }
+
+//     return 0;
+// }
+
+int main(void){
     Stack array = new_array();
-    int index;
-    int value;
-    int left;
-    int right;
-
-    char command[30];
-
-    while (scanf("%s", command) == 1) {
-
-        if (strcmp(command, "get") == 0) {
-
-
-            scanf("%d", &index);
-            if (index >= 0) {
-                get(&array, index);
-            }
-
-        } else if (strcmp(command, "set") == 0) {
-
-            scanf("%d %d", &index, &value);
-            if (index >= 0) {
-                set(&array, index, value);
-            }
-
-        } else if (strcmp(command, "unset") == 0) {
-
-            unset(&array);
-
-        } else if (strcmp(command, "maxininterval") == 0) {
-
-            scanf("%d %d", &left, &right);
-            if (left >= 0 && right >= 0 && left <= right) {
-                printf("%d \n", max_in_interval(&array, left, right));
-            }
-            else {
-                printf("0\n");
-            }
-            // read left and right
-            // call maxininterval
-
-        }
-    }
-
-    return 0;
-}
-
-// Test 1
+    // Test 1
+    
 //    set (&array, 0, 5);
 //    set (&array, 1, 10);
 //    set (&array, 2, 15);
@@ -304,18 +307,20 @@ int main(void) {
 //    get (&array, 3); // should print 20
 //    unset (&array);
 //    get (&array, 3); // should print 0
-//    max_in_interval (&array, 0, 3); // should print 15
-//    max_in_interval (&array, 4, 6); // should print 0
+//    printf("%d\n", max_in_interval (&array, 0, 3)); // should print 15
+//    printf("%d\n", max_in_interval (&array, 4, 6)); // should print 0
 //
 //
 // Test 2
-//    set (&array, 0, 5);
-//    set (&array, 1, 10);
-//    set (&array, 0, 50);
-//    set (&array, 3, 20);
-//    set (&array, 4, 25);
-//    max_in_interval (&array, 0, 4); // should print 50
-//    max_in_interval (&array, 1, 3); // should print 20
-//    set (&array, 2000, 500);
-//    max_in_interval (&array, 0, 2000); // should print 500
-//    max_in_interval (&array, 0, 1999); // should print 50
+   set (&array, 0, 5);
+   set (&array, 1, 10);
+   set (&array, 0, 50);
+   set (&array, 3, 20);
+   set (&array, 4, 25);
+   printf("%d\n", max_in_interval (&array, 0, 4)); // should print 50
+   printf("%d\n", max_in_interval (&array, 1, 3)); // should print 20
+   set (&array, 2000, 500);
+   printf("%d\n", max_in_interval (&array, 0, 2000)); // should print 500
+   printf("%d\n", max_in_interval (&array, 0, 1999)); // should print 50
+
+}
