@@ -157,151 +157,66 @@ void set(Stack* stack, int i, int value) {
     push(stack, updated_tree);
 }
 
+int maxleftsegment(TreeNode* root, int level, int index) {
+    if (root == NULL) return 0;
+    if (level == 0) return root->value;
+
+    int bit = (index >> (level - 1)) & 1;
+
+    if (!bit) {
+        int left = maxleftsegment(root->left, level - 1, index);
+        int right = root->right ? root->right->max_in_subtree : 0;
+        return max(left, right);
+    }
+
+    return maxleftsegment(root->right, level - 1, index);
+}
+
+int maxrightsegment(TreeNode* root, int level, int index) {
+    if (root == NULL) return 0;
+    if (level == 0) return root->value;
+
+    int bit = (index >> (level - 1)) & 1;
+
+    if (!bit) {
+        return maxrightsegment(root->left, level - 1, index);
+    }
+
+    int left = root->left ? root->left->max_in_subtree : 0;
+    int right = maxrightsegment(root->right, level - 1, index);
+
+    return max(left, right);
+}
+
+int maxsegment(TreeNode* root, int level, int left_index, int right_index) {
+    if (root == NULL) return 0;
+    if (level == 0) return root->value;
+
+    int left_bit = (left_index >> (level - 1)) & 1;
+    int right_bit = (right_index >> (level - 1)) & 1;
+
+    if (left_bit == 0 && right_bit == 0)
+        return maxsegment(root->left, level - 1, left_index, right_index);
+
+    if (left_bit == 1 && right_bit == 1)
+        return maxsegment(root->right, level - 1, left_index, right_index);
+
+    int left_max = maxleftsegment(root->left, level - 1, left_index);
+    int right_max = maxrightsegment(root->right, level - 1, right_index);
+
+    return max(left_max, right_max);
+}
+
 int max_in_interval(Stack* stack, int left, int right) {
 
-    Tree* tree = stack->top->tree;
-    if (tree->root == NULL) return 0;
+    int level = stack->top->tree->height;
+    long long max_index = (1LL << stack->top->tree->height) - 1;
 
-    bool same_path = true;
-    bool continue_left = true;
-    bool continue_right = true;
-    bool found_something = false;
-
-    int height = stack->top->tree->height;
-    int max_index = (1 << height) - 1;
+    // Entire interval is outside the represented tree
     if (left > max_index) return 0;
-    if (right > max_index) right = max_index;
-
-    int max_value = 0;
-    int leftmost = 0;
-    int rightmost = 0;
-
-    TreeNode* left_end = stack->top->tree->root;
-    TreeNode* right_end = stack->top->tree->root;
-
-    int left_path;
-    int right_path;
-    
-    for (int i = height - 1; i >= 0; i--) {
-        left_path = (left >> i) & 1;
-        right_path = (right >> i) & 1;
-        if (same_path) {
-            if (left_path == right_path) {
-                switch (left_path)
-                {
-                case 0:
-                    if (left_end->has_left) {
-                        left_end = left_end->left;
-                        right_end = right_end->left;
-                        continue;
-                    }
-                    else return 0;
-                    break;
-                
-                case 1:
-                    if (right_end->has_right) {
-                        left_end = left_end->right;
-                        right_end = right_end->right;
-                        continue;
-                    }
-                    else return 0;
-                    break;
-                }
-            }
-
-            else {
-                same_path = false;
-                if (!left_end->has_left) continue_left = false;
-                else left_end = left_end->left;
-                if (!right_end->has_right) continue_right = false;
-                else right_end = right_end->right;
-                if (!continue_left && !continue_right) return 0;
-                continue;
-            }
-        }
-
-        if (continue_left) {
-            switch (left_path)
-            {
-            case 0:
-                if (left_end->has_right) {
-                    int value = left_end->right->max_in_subtree;
-                    if (!found_something || value > max_value) {
-                        max_value = value;
-                        found_something = true;
-                    }
-                }
-                if (left_end->has_left) {
-                    left_end = left_end->left;
-                }
-                else continue_left = false;
-                break;
-            
-            case 1:
-                if (left_end->has_right) {
-                    left_end = left_end->right;
-                }
-                else continue_left = false;
-                break;
-            }
-        }
-        if (continue_right) {
-            switch (right_path)
-            {
-            case 0:
-                if (right_end->has_left) {
-                    right_end = right_end->left;
-                }
-                else continue_right = false;
-                break;
-            
-            case 1:
-                if (right_end->has_left) {
-                    int value = right_end->left->max_in_subtree;
-
-                    if (!found_something || value > max_value) {
-                        max_value = value;
-                        found_something = true;
-                    }
-                }
-
-                if (right_end->has_right) {
-                    right_end = right_end->right;
-                }
-                else {
-                    continue_right = false;
-                }
-                break;
-            }
-        }
-
-        if (!continue_left && !continue_right) {
-            return max_value;
-        }
-    }
-
-    if (continue_left) {
-        int value = left_end->value;
-
-        if (!found_something || value > max_value) {
-            max_value = value;
-            found_something = true;
-        }
-    }
-
-    if (continue_right) {
-        int value = right_end->value;
-
-        if (!found_something || value > max_value) {
-            max_value = value;
-            found_something = true;
-        }
-    }
-
-    if (!found_something)
-        return 0;
-
-    return max_value;
+    // Clamp the right endpoint to the tree
+    if (right > max_index) right = (int)max_index;
+    return maxsegment(stack->top->tree->root, level, left, right);
 }
 
 void get(Stack* stack, int i) {
@@ -378,3 +293,29 @@ int main(void) {
 
     return 0;
 }
+
+// Test 1
+//    set (&array, 0, 5);
+//    set (&array, 1, 10);
+//    set (&array, 2, 15);
+//    set (&array, 3, 20);
+//    get (&array, 0); // should print 5
+//    get (&array, 1); // should print 10
+//    get (&array, 3); // should print 20
+//    unset (&array);
+//    get (&array, 3); // should print 0
+//    max_in_interval (&array, 0, 3); // should print 15
+//    max_in_interval (&array, 4, 6); // should print 0
+//
+//
+// Test 2
+//    set (&array, 0, 5);
+//    set (&array, 1, 10);
+//    set (&array, 0, 50);
+//    set (&array, 3, 20);
+//    set (&array, 4, 25);
+//    max_in_interval (&array, 0, 4); // should print 50
+//    max_in_interval (&array, 1, 3); // should print 20
+//    set (&array, 2000, 500);
+//    max_in_interval (&array, 0, 2000); // should print 500
+//    max_in_interval (&array, 0, 1999); // should print 50
