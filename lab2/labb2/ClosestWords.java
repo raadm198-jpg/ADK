@@ -9,29 +9,47 @@ public class ClosestWords {
 
   int closestDistance = -1;
 
-  int partDist(String w1, String w2, int w1len, int w2len) {
+  int partDist(int[][] matrix, String w1, String w2, int w1len, int w2len, int startlength) {
     if (w1len == 0)
       return w2len;
     if (w2len == 0)
       return w1len;
-    int res = partDist(w1, w2, w1len - 1, w2len - 1) + 
-	(w1.charAt(w1len - 1) == w2.charAt(w2len - 1) ? 0 : 1);
-    int addLetter = partDist(w1, w2, w1len - 1, w2len) + 1;
-    if (addLetter < res)
-      res = addLetter;
-    int deleteLetter = partDist(w1, w2, w1len, w2len - 1) + 1;
-    if (deleteLetter < res)
-      res = deleteLetter;
-    return res;
+
+    int cost = 0;
+
+    for (int i = 1; i < w1len+1; i++) {
+      for (int j = 1+startlength; j < w2len+1; j++) {
+        cost = w1.charAt(i-1) == w2.charAt(j-1) ? 0 : 1;
+        matrix[i][j] = Math.min(matrix[i][j-1] + 1, Math.min(matrix[i-1][j-1] + cost, matrix[i-1][j] + 1));
+      }
+    }
+
+    return matrix[w1len][w2len];
   }
 
-  int distance(String w1, String w2) {
-    return partDist(w1, w2, w1.length(), w2.length());
+  int distance(int[][] matrix, String w1, String w2, int startlength) {
+    return partDist(matrix, w1, w2, w1.length(), w2.length(), startlength);
   }
 
   public ClosestWords(String w, List<String> wordList) {
+
+    int[][] matrix = new int[w.length()+1][50];
+    for (int i = 0; i < w.length()+1; i++) {matrix[i][0] = i;}
+    for (int i = 1; i < 50; i++) {matrix[0][i] = i;}
+
+    String lastWord = "";
+    int startlength = 0;
     for (String s : wordList) {
-      int dist = distance(w, s);
+      if (lastWord.length() > 0) {
+        for (int i = 0; i < Math.min(s.length(), lastWord.length()); i++) {
+          if (s.charAt(i) == lastWord.charAt(i)) {
+            startlength++;
+            continue;
+          }
+          break;
+        }
+      }
+      int dist = distance(matrix, w, s, startlength);
       // System.out.println("d(" + w + "," + s + ")=" + dist);
       if (dist < closestDistance || closestDistance == -1) {
         closestDistance = dist;
@@ -40,6 +58,8 @@ public class ClosestWords {
       }
       else if (dist == closestDistance)
         closestWords.add(s);
+      lastWord = s;
+      startlength = 0;
     }
   }
 
