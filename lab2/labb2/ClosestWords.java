@@ -71,3 +71,31 @@ public class ClosestWords {
     return closestWords;
   }
 }
+
+// bara lite ändringar
+
+// Processing folder: ./test
+// Processing testcase: testmedordlista
+// CPU time for this test: 26 ms
+// Processing testcase: testmedordlista2
+// CPU time for this test: 1 ms
+
+//Processing folder: large
+//Processing testcase: testmedordlista3
+//CPU time for this test: 110 ms
+//Processing testcase: testmedordlista4
+//CPU time for this test: 231 ms
+
+// lite fler ändringar
+
+// Processing folder: ./test
+// Processing testcase: testmedordlista
+// CPU time for this test: 20 ms
+// Processing testcase: testmedordlista2
+// CPU time for this test: 1 ms
+
+// Processing folder: large
+// Processing testcase: testmedordlista3
+// CPU time for this test: 87 ms
+// Processing testcase: testmedordlista4
+// CPU time for this test: 93 ms
