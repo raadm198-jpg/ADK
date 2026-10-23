@@ -8,30 +8,62 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+
+// int x; //antalet X hörn
+// int y;  //antalet y hörn
+// int V;  //x+y+2 Flödes input
+// int e;
+// int E; // e+x+y
+// int lista;
 
 
-void readBipartiteGraph() {
-  int x, y, e, i;
+// int myMax(x,y){
+//   if (x>y){return x;}
+//   return y;
+// }
+
+int *readBipartiteGraph() {
+  int x, y, e, a, b;
+  int count = 0;
   // Läs antal hörn och kanter
   scanf("%d%d%d", &x, &y, &e);
+  int *allt = malloc(sizeof(int)*(2*e + 3));
+  allt[count] = x;
+  count++;
+  allt[count] = y;
+  count++;
+  allt[count] = e;
+  count++;
 
-  // Läs in kanterna
   for (int i = 0; i < e; ++i) {
-    int a, b;
     scanf("%d %d", &a, &b);
+    allt[count] = a;
+    count++;
+    allt[count]= b;
+    count++;
   }
+  return allt;
 }
 
-
-void writeFlowGraph() {
-  int v = 23, e = 0, s = 1, t = 2;
+void writeFlowGraph(int *arr ) {
+  int x = arr[0], y= arr[1], e = arr[2];
+  int v = x + y + 2;
+  int s = v-1;
+  int t = v;
+  int count = 3;
+  e = x+y+e;
 
   // Skriv ut antal hörn och kanter samt källa och sänka
   printf("%d\n%d %d\n%d\n", v, s, t, e);
   for (int i = 0; i < e; ++i) {
-    int u, v, c;
+    int u = arr[count];
+    count++;
+    int v = arr[count];
+    count++;
     // Kant från u till v med kapacitet c
-    printf("%d %d %d\n", u, v, c);
+
+    printf("%d %d %d\n", u, v, 1);
   }
   // Var noggrann med att flusha utdata när flödesgrafen skrivits ut!
   fflush(stdout);
@@ -73,9 +105,10 @@ void writeBipMatchSolution() {
 
 
 int main(void) {
-  readBipartiteGraph();
+  
+  int *graph = readBipartiteGraph();
 
-  writeFlowGraph();
+  writeFlowGraph(graph);
 
   readMaxFlowSolution();
 
@@ -85,3 +118,22 @@ int main(void) {
   fprintf(stderr, "Bipred avslutar\n");
   return 0;
 }
+
+
+
+  //malloc
+  // Läs in kanterna
+  // int *arr[x+y];
+  // int grantal[x+y];
+  // int m = myMax(x,y);
+  // for (int j = 0 ; j<(x+y);j++){
+  //   arr[j] = malloc(sizeof(int)*m);
+  // }
+
+      // allt[i] = a;
+    // allt[e+i]= b;
+
+    // // arr[a][grantal[a]] = b;
+    // // grantal[a] += 1;
+    // // arr[b][grantal[b]] = a;
+    // // grantal[b] += 1;
