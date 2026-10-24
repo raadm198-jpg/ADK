@@ -11,6 +11,39 @@ typedef struct {
     int capacity;
 } Queue;
 
+typedef struct {
+    int u;
+    int v;
+    int capacity;
+    int flow;
+    int residual;
+    int direction; // 1 for forward edge, -1 for backward edge
+    int reverseIndex; // Index of the reverse edge in the adjacency list
+} Edge;
+
+typedef struct {
+    Edge *neighbors;
+    int valence;
+    int listSize;
+} NeighborList;
+
+typedef struct {
+    int v;
+    int s;
+    int t;
+    int e;
+    NeighborList *adjacencyList;
+
+} readFlowValues;
+
+typedef struct {
+
+    int* ReverseNodePath;
+    int* ReversePathIndex;
+    int distance;
+
+} fakePaths;
+
 void init(Queue *q, int v) {
     q->frontIndex = 0;
     q->rearIndex = 0;
@@ -43,36 +76,6 @@ void destroy(Queue *q) {
     free(q->data);
 }
 
-
-
-typedef struct {
-    int u;
-    int v;
-    int capacity;
-    int flow;
-    int residual;
-    int direction; // 1 for forward edge, -1 for backward edge
-    int reverseIndex; // Index of the reverse edge in the adjacency list
-} Edge;
-
-
-typedef struct {
-    Edge *neighbors;
-    int valence;
-    int listSize;
-} NeighborList;
-
-
-typedef struct {
-    int v;
-    int s;
-    int t;
-    int e;
-    NeighborList *adjacencyList;
-
-} readFlowValues;
-
-
 void addNeighbor(NeighborList *list, Edge edge) {
     if (list->valence >= list->listSize) {
         int newListSize = list->listSize == 0 ? 4 : list->listSize * 2;
@@ -86,7 +89,7 @@ void addNeighbor(NeighborList *list, Edge edge) {
     list->neighbors[list->valence++] = edge;
 }
 
-
+/// need changes
 readFlowValues readMaxFlow() {
   int v, e, s, t;
   int count = 0;
@@ -124,28 +127,6 @@ readFlowValues readMaxFlow() {
 
   return flowValues;
 }
-
-
-//BFS(G, start):
-//    queue = [start]
-//    visited = {start}
-
-//    while queue is not empty:
-//        v = queue.dequeue()
-//
-//        for each neighbor u of v:
-//            if u not in visited:
-//                visited.add(u)
-//                queue.enqueue(u)
-
-
-typedef struct {
-
-    int* ReverseNodePath;
-    int* ReversePathIndex;
-    int distance;
-
-} fakePaths;
 
 fakePaths BFS(NeighborList *adjacencyList, int v, int s, int t) {
 
@@ -269,7 +250,6 @@ int edumundK (NeighborList *adjacencyList, int v, int s, int t) {
 
     return f;
 }
-
 
 void writeFlowGraphSolution(NeighborList *arr, int v, int s, int t, int e, int f) {
   
