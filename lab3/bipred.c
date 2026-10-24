@@ -56,11 +56,7 @@ void writeFlowGraph(int *arr ) {
 
   // Skriv ut antal hörn och kanter samt källa och sänka
   printf("%d\n%d %d\n%d\n", v, s, t, e);
-<<<<<<< HEAD
   for (int i = 0; i < arr[2]; ++i) {
-=======
-  for (int i = 0; i < e; ++i) {
->>>>>>> fd60ec9ae0f61f0827d848f94173a050a3292e84
     int u = arr[count];
     count++;
     int v = arr[count];
