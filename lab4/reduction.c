@@ -5,14 +5,11 @@
 int main() {
     int V, E, M;
     scanf("%d%d%d", &V, &E, &M);
+    if (M > V) M = V;
 
     int x, y;
-    int *scenes = malloc(sizeof(int)*(2*(E+V+1)));
-    int *valence = malloc(sizeof(int)*V);
-    
-    for (int i = 0; i < V; i++) {
-        valence[i] = 0;
-    }
+    int *scenes = malloc(sizeof(int) * 2 * (E + V + 2));
+    int *valence = calloc(V, sizeof(int));
 
     for (int i = 0; i < E; i++){
         scanf("%d%d", &x, &y);
@@ -20,16 +17,31 @@ int main() {
         scenes[2*i+1] = y;
     }
 
-    for (int i = 0; i < V; i++) {
-        scenes[2*(E+i)] = i+1;
-        scenes[2*(E+i)+1] = V+1;
+    for (int i = 0; i < E; i++) {
+        valence[scenes[2*i] - 1]++;
+        valence[scenes[2*i+1] - 1]++;
     }
 
-    scenes[2*(E+V)] = V+2;
-    scenes[2*(E+V)+1] = 1;
+    int count = E;
+
+    for (int i = 0; i < V; i++) {
+        if (valence[i] == 0) {
+            scenes[2*count] = i + 1;
+            scenes[2*count+1] = V + 1;
+            count++;
+        }
+    }
+
+    scenes[2*count] = 1;
+    scenes[2*count+1] = V + 1;
+    count++;
+
+    scenes[2*count] = 1;
+    scenes[2*count+1] = V + 2;
+    count++;
 
     int R = V+2;
-    int S = E + V + 1;
+    int S = count;
     int P = M+2;
 
     printf("%d\n%d\n%d\n", R, S, P);
@@ -56,5 +68,4 @@ int main() {
     }
 
     return 0;
-
 }
