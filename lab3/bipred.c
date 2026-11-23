@@ -1,27 +1,5 @@
-/**
- * Exempel på in- och utdatahantering för maxflödeslabben i kursen
- * ADK.
- *
- * Använder scanf/printf i C.
- *
- * Author: Per Austrin
- */
-
 #include <stdio.h>
 #include <stdlib.h>
-
-// int x; //antalet X hörn
-// int y;  //antalet y hörn
-// int V;  //x+y+2 Flödes input
-// int e;
-// int E; // e+x+y
-// int lista;
-
-
-// int myMax(x,y){
-//   if (x>y){return x;}
-//   return y;
-// }
 
 int *readBipartiteGraph() {
   int x, y, e, a, b;
@@ -79,7 +57,6 @@ void writeFlowGraph(int *arr ) {
   fprintf(stderr, "Skickade iväg flödesgrafen\n");
 }
 
-
 int *readMaxFlowSolution() {
   int v, e, s, t, f;
   int count = 0;
@@ -121,7 +98,6 @@ int *readMaxFlowSolution() {
   return evenmore;
 }
 
-
 void writeBipMatchSolution(int x, int y, int *arr) {
   int maxMatch = arr[4];
 
@@ -137,7 +113,6 @@ void writeBipMatchSolution(int x, int y, int *arr) {
   }
 
 }
-
 
 int main(void) {
   
@@ -155,22 +130,3 @@ int main(void) {
   free(flowGraph);
   return 0;
 }
-
-
-
-  //malloc
-  // Läs in kanterna
-  // int *arr[x+y];
-  // int grantal[x+y];
-  // int m = myMax(x,y);
-  // for (int j = 0 ; j<(x+y);j++){
-  //   arr[j] = malloc(sizeof(int)*m);
-  // }
-
-      // allt[i] = a;
-    // allt[e+i]= b;
-
-    // // arr[a][grantal[a]] = b;
-    // // grantal[a] += 1;
-    // // arr[b][grantal[b]] = a;
-    // // grantal[b] += 1;

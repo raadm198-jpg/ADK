@@ -5,14 +5,10 @@
 int main() {
     int V, E, M;
     scanf("%d%d%d", &V, &E, &M);
+    if (M > V) M = V;
 
     int x, y;
     int *scenes = malloc(sizeof(int)*(2*(E+V+1)));
-    int *valence = malloc(sizeof(int)*V);
-    
-    for (int i = 0; i < V; i++) {
-        valence[i] = 0;
-    }
 
     for (int i = 0; i < E; i++){
         scanf("%d%d", &x, &y);

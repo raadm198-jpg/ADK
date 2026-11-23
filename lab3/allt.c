@@ -44,7 +44,6 @@ typedef struct {
 
 } fakePaths;
 
-
 int *readBipartiteGraph() {
   int x, y, e, a, b;
   int count = 0;
@@ -87,7 +86,6 @@ int *readBipartiteGraph() {
   }
   return allt;
 }
-
 
 void init(Queue *q, int v) {
     q->frontIndex = 0;
@@ -134,7 +132,6 @@ void addNeighbor(NeighborList *list, Edge edge) {
     list->neighbors[list->valence++] = edge;
 }
 
-
 NeighborList *listMaker(int *graph, int v, int e) {
 
   NeighborList *adjacencyList = calloc(v, sizeof(NeighborList));
@@ -154,7 +151,6 @@ NeighborList *listMaker(int *graph, int v, int e) {
   }
   return adjacencyList;
 }
-
 
 fakePaths BFS(NeighborList *adjacencyList, int v, int s, int t) {
 
@@ -305,11 +301,6 @@ int *resultMaxFlow(NeighborList *adjacencyList, int maxFlow, int x, int y,int s,
   
   return result;
 }
-
-
-
-
-
 
 void writeBipMatchSolution(int x, int y, int *arr, int maxMatch) {
 
